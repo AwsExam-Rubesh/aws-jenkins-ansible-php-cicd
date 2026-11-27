@@ -25,6 +25,7 @@ pipeline {
                     test -f ansible/inventory/inventory.ini
                     test -f ansible/playbooks/deploy-php.yml
                     test -f app/index.php
+                    test -f sonar-project.properties
 
                     echo "All required files are present."
                 '''
@@ -56,6 +57,18 @@ pipeline {
                         playbooks/deploy-php.yml \
                         --syntax-check
                 '''
+            }
+        }
+
+        stage('SonarQube Code Quality Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarScanner'
+
+                    withSonarQubeEnv('SonarQube') {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }
             }
         }
 
