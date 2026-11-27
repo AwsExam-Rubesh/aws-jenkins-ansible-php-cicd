@@ -1,3 +1,4 @@
+```groovy
 pipeline {
     agent any
 
@@ -28,6 +29,20 @@ pipeline {
                     test -f sonar-project.properties
 
                     echo "All required files are present."
+                '''
+            }
+        }
+
+        stage('Gitleaks Secret Scan') {
+            steps {
+                sh '''
+                    set -e
+
+                    echo "Starting Gitleaks secret scan..."
+
+                    gitleaks git . --redact --exit-code 1
+
+                    echo "Gitleaks scan completed successfully."
                 '''
             }
         }
@@ -129,3 +144,4 @@ pipeline {
         }
     }
 }
+```
