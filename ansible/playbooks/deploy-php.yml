@@ -1,0 +1,31 @@
+---
+- name: Deploy PHP application
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: Install Apache and PHP
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - php
+        state: present
+
+    - name: Start and enable Apache
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Deploy PHP application
+      ansible.builtin.copy:
+        src: ../../app/index.php
+        dest: /var/www/html/index.php
+        owner: apache
+        group: apache
+        mode: '0644'
+
+    - name: Restart Apache
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
